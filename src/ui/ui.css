@@ -1,0 +1,57 @@
+/* Structure and motion of shared primitives. Looks set fonts, colours and sizes. */
+
+/* RollingNumber */
+.roll { position: relative; display: inline-flex; white-space: nowrap; }
+.rd { display: inline-flex; }
+.rw { display: inline-block; height: 1.2em; overflow: hidden; mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent); }
+.rc { display: flex; flex-direction: column; transition: transform var(--roll-dur, 800ms) var(--out); }
+.rc span, .rs { height: 1.2em; line-height: 1.2em; text-align: center; }
+
+/* Segmented */
+.seg { position: relative; display: inline-flex; padding: 3px; border-radius: 999px; background: color-mix(in oklab, currentColor 8%, transparent); }
+.seg button { position: relative; z-index: 1; min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: none; font-size: 14px; opacity: .6; cursor: pointer; transition: opacity 200ms var(--out); }
+.seg button[aria-pressed="true"] { opacity: 1; }
+.seg__pill { position: absolute; top: 3px; bottom: 3px; left: 0; width: var(--seg-w, 0); translate: var(--seg-x, 0) 0; border-radius: 999px; background: color-mix(in oklab, currentColor 14%, transparent); }
+/* Looks size these freely; on touch screens the 44px floor wins. */
+@media (pointer: coarse) { .seg button { min-height: 44px !important; } }
+.seg--ready .seg__pill { transition: translate 500ms var(--spring-b), width 500ms var(--spring-b); }
+
+/* Flows: --flow-w is the envelope's share 0..1 */
+.flows { display: block; width: 100%; height: 40px; overflow: visible; }
+.flows path { fill: none; stroke-linecap: round; }
+.flows__base { stroke: color-mix(in oklab, currentColor 20%, transparent); stroke-width: 1; stroke-dasharray: 2 4; }
+.flows__run { stroke-dasharray: 1 1; stroke-dashoffset: 1; opacity: 0; stroke-width: calc(1.5px + var(--flow-w, 0) * 7px); }
+.flows__run[data-k="taxes"] { stroke: var(--taxes, currentColor); }
+.flows__run[data-k="savings"] { stroke: var(--savings, currentColor); }
+.flows__run[data-k="spendable"] { stroke: var(--spendable, currentColor); }
+.flows__run--go { animation: flow 1200ms var(--out) forwards; }
+@keyframes flow { 0% { stroke-dashoffset: 1; opacity: 1; } 55% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+
+/* PaymentQueue */
+.chip { position: relative; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 14px 8px 8px; border: 1px solid color-mix(in oklab, currentColor 15%, transparent); border-radius: 14px; }
+/* The queue reads as one row: the next payment in full, the others as avatars waiting behind it, paid ones
+   as grey placeholders. Widths animate (interpolate-size on :root), so nothing jumps. The html:root selectors
+   outrank each look's own .chip rules on purpose. */
+.queue__chips { display: flex; align-items: center; min-width: 0; }
+.chip { flex: none; }
+.chip:not(.chip--waiting, .chip--gone) { flex: 0 1 auto; min-width: 0; }
+.chip__body { display: flex; align-items: center; gap: 10px; min-width: 0; margin-left: 10px; overflow: hidden; white-space: nowrap; transition: width 520ms var(--out), margin 520ms var(--out), opacity 280ms var(--out) 180ms; }
+.chip--waiting .chip__body, .chip--gone .chip__body { width: 0; margin-left: 0; opacity: 0; transition-delay: 0s; }
+.chip__text { min-width: 0; }
+.chip__who { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.chip .avatar { transition: opacity 300ms var(--out); }
+.chip--gone .avatar { opacity: 0; }
+html:root .queue__chips > .chip { gap: 0; }
+html:root .queue__chips > .chip--gone { background: color-mix(in oklab, currentColor 7%, transparent); box-shadow: none; animation: chip-placeholder 1.4s var(--io) infinite alternate; }
+@keyframes chip-placeholder { to { opacity: .5; } }
+.chip__text { display: grid; }
+.chip__who { font-weight: 500; }
+.chip__what { font-size: 13px; opacity: .6; }
+.chip__amt { margin-left: 6px; font-variant-numeric: tabular-nums; }
+.avatar { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: color-mix(in oklab, currentColor 10%, transparent); font-size: 13px; font-weight: 600; }
+
+/* Mark */
+.mark { flex: none; }
+.mark rect:nth-child(1) { fill: currentColor; }
+.mark rect:nth-child(2) { fill: var(--savings, currentColor); }
+.mark rect:nth-child(3) { fill: var(--taxes, currentColor); }

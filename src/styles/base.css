@@ -1,0 +1,72 @@
+/* Structure and motion only. Colours and fonts belong to themes (src/themes/<id>/theme.css). */
+:root {
+  --out: cubic-bezier(.22, 1, .36, 1);
+  --io: cubic-bezier(.65, 0, .35, 1);
+  --spring: linear(0, 0.006, 0.025 2.8%, 0.101 6.1%, 0.539 18.9%, 0.721 25.3%, 0.849 31.5%, 0.937 38.1%, 0.968 41.8%, 0.991 45.7%, 1.006 50.1%, 1.015 55%, 1.017 63.9%, 1.001 85.9%, 1);
+  --spring-b: linear(0, 0.013 0.6%, 0.05 1.2%, 0.2 2.6%, 0.467 4.6%, 0.871 7.5%, 1.064 9.2%, 1.163 10.6%, 1.211 12.1%, 1.209 13.6%, 1.163 15.4%, 1.052 18.5%, 0.98 21.4%, 0.951 23.9%, 0.951 26.4%, 0.983 31.1%, 1.008 36%, 1.014 39.6%, 1.003 51.7%, 0.998 62.2%, 1);
+  --gutter: clamp(16px, 4vw, 40px);
+  -webkit-text-size-adjust: 100%;
+  interpolate-size: allow-keywords;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+html { scroll-behavior: smooth; }
+body { min-height: 100svh; font: 16px/1.5 system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+main { overflow-x: clip; }
+img, svg { display: block; max-width: 100%; }
+button, input { font: inherit; color: inherit; }
+a { color: inherit; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.nav { position: sticky; top: 0; z-index: 40; display: flex; align-items: center; gap: 24px; height: 64px; padding-inline: max(var(--gutter), calc((100% - 1200px) / 2 + var(--gutter))); }
+.nav__brand { display: flex; align-items: center; gap: 10px; min-height: 44px; font-weight: 600; text-decoration: none; }
+.nav__cta { flex: none; }
+@media (max-width: 640px) { .nav .nav__cta { display: none; } }
+.nav__links { display: flex; gap: 20px; font-size: 14px; }
+.nav__links a { text-decoration: none; white-space: nowrap; }
+@media (max-width: 860px) { .nav__links { display: none; } }
+
+/* Look switcher: one pill; only the active look shows its name, the others keep it for screen readers. */
+.looks { display: flex; gap: 2px; margin-inline: auto; padding: 3px; border-radius: 999px; box-shadow: inset 0 0 0 1px color-mix(in oklab, currentColor 16%, transparent); }
+.looks button { min-width: 36px; min-height: 36px; padding: 0 12px; border: 0; border-radius: 999px; background: none; font-size: 13px; white-space: nowrap; opacity: .6; cursor: pointer; transition: opacity 200ms, background 200ms; }
+.looks button:hover { opacity: 1; }
+.looks button[aria-pressed="true"] { opacity: 1; background: color-mix(in oklab, currentColor 12%, transparent); }
+.looks button:not([aria-pressed="true"]) .looks__name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+@media (max-width: 600px) {
+  .looks { margin-inline: auto 0; }
+  .looks .looks__name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+}
+@media (pointer: coarse) { .looks button { min-width: 44px; min-height: 44px; } }
+
+/* "How it's built": a neutral annotation layer above every look, coloured by the look's color-scheme */
+main > section { position: relative; }
+.note {
+  position: absolute; top: 12px; right: var(--gutter); z-index: 30; display: grid; gap: 10px; width: min(360px, calc(100% - 2 * var(--gutter)));
+  padding: 14px 16px; border-radius: 14px; background: Canvas; color: CanvasText; text-align: left;
+  box-shadow: 0 0 0 1px color-mix(in oklab, CanvasText 14%, transparent), 0 18px 40px -18px rgb(0 0 0 / .45);
+  font: 400 13px/1.45 system-ui, sans-serif; letter-spacing: 0; text-transform: none; animation: note-in 400ms var(--out) both;
+}
+.month__sticky > .note { top: 76px; }
+.note b { display: block; margin-bottom: 2px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; opacity: .7; }
+.built-toggle {
+  position: fixed; right: 16px; bottom: 16px; z-index: 50; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 8px 0 16px;
+  border: 0; border-radius: 999px; background: Canvas; color: CanvasText; font: 500 14px/1 system-ui, sans-serif; cursor: pointer;
+  box-shadow: 0 0 0 1px color-mix(in oklab, CanvasText 16%, transparent), 0 10px 30px -12px rgb(0 0 0 / .4);
+}
+.built-toggle[aria-pressed="true"] { background: CanvasText; color: Canvas; }
+.built-toggle kbd { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: color-mix(in oklab, currentColor 12%, transparent); font: inherit; }
+@keyframes note-in { from { opacity: 0; transform: translateY(-8px) scale(.98); } }
+
+/* View Transitions are only used for the look switch: no cross-fade, the new page grows in a circle. */
+::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+:root[data-switch]::view-transition-new(root) { animation: look-reveal 650ms var(--io); }
+@keyframes look-reveal { from { clip-path: circle(0 at var(--vt-x) var(--vt-y)); } to { clip-path: circle(var(--vt-r) at var(--vt-x) var(--vt-y)); } }
+
+/* Reduced motion: each look's Month renders still frames; the id outranks the looks' scoped heights. */
+#month.month--still { height: auto; }
+#month.month--still .month__sticky { position: static; height: auto; padding-block: 40px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+}

@@ -1,0 +1,91 @@
+/* Neutral structure for shared sections. Class names are the API each look restyles; no colours beyond currentColor and the envelope variables. */
+.block { max-width: 1200px; margin-inline: auto; padding: clamp(72px, 12vw, 140px) var(--gutter); }
+.label { font-size: 13px; letter-spacing: .04em; text-transform: uppercase; opacity: .65; }
+.block h2 { margin-top: 16px; max-width: 13em; font-size: clamp(32px, 5vw, 56px); font-weight: 500; line-height: 1.05; text-wrap: balance; }
+.sub { max-width: 32em; margin-top: 16px; font-size: 18px; opacity: .8; text-wrap: pretty; }
+.fine { margin-top: 16px; font-size: 12px; opacity: .6; }
+.card { padding: clamp(20px, 3vw, 32px); border: 1px solid color-mix(in oklab, currentColor 14%, transparent); border-radius: 20px; }
+.roll { font-variant-numeric: tabular-nums; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 20px; border: 1px solid currentColor; border-radius: 999px; background: none; font-weight: 500; text-decoration: none; cursor: pointer; }
+.btn--primary { border-width: 2px; }
+
+.key-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: currentColor; }
+[data-k="taxes"] { --c: var(--taxes, currentColor); }
+[data-k="savings"] { --c: var(--savings, currentColor); }
+[data-k="spendable"] { --c: var(--spendable, currentColor); }
+.key-dot[data-k] { background: var(--c); }
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal { animation: reveal linear both; animation-timeline: view(); animation-range: entry 5% cover 28%; }
+  }
+  @keyframes reveal { from { opacity: 0; transform: translateY(40px); } }
+}
+
+/* Rules */
+.rules { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 96px); align-items: center; }
+@media (max-width: 900px) { .rules { grid-template-columns: 1fr; } }
+.rules__sliders { display: grid; gap: 28px; max-width: 460px; margin-top: 40px; }
+.rules__slider-top { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.rules__slider output { margin-left: auto; font-variant-numeric: tabular-nums; }
+.rules input[type="range"] { width: 100%; height: 32px; margin-top: 6px; accent-color: var(--c); cursor: pointer; }
+@media (pointer: coarse) { .rules input[type="range"] { height: 44px !important; } }
+.rules__stack { display: flex; gap: 4px; height: 56px; margin-top: 20px; }
+/* Short and linear: the bars follow the slider instead of trailing behind it. */
+.rules__stack b { flex: var(--f) 1 0; min-width: 0; border-radius: 10px; background: var(--c); transition: flex-grow 120ms linear; }
+.rules__rows { display: grid; margin-top: 20px; }
+.rules__rows div { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid color-mix(in oklab, currentColor 12%, transparent); }
+.rules__rows dt { display: flex; align-items: center; gap: 10px; }
+.rules__rows dd { margin-left: auto; }
+
+/* Currencies */
+.currencies__head, .pricing__head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 24px; }
+.currencies__list { display: grid; margin-top: 40px; padding: 0; list-style: none; }
+.currencies__list li { display: grid; grid-template-columns: auto 1fr auto auto auto; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid color-mix(in oklab, currentColor 12%, transparent); }
+.currencies__who { display: grid; }
+.currencies__who small, .currencies__from, .currencies__rate { opacity: .65; }
+.currencies__rate { font-size: 13px; }
+.currencies__to { min-width: 8ch; justify-content: flex-end; font-weight: 500; }
+@media (max-width: 640px) {
+  .currencies__list li { grid-template-columns: auto 1fr auto; }
+  .currencies__from, .currencies__rate { display: none; }
+}
+
+/* Pricing */
+.pricing__plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 40px; }
+@media (max-width: 900px) { .pricing__plans { grid-template-columns: 1fr; } }
+.pricing__plan { display: grid; align-content: start; gap: 20px; }
+.pricing__plan h3 { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.pricing__tag, .pricing__save { padding: 2px 8px; border: 1px solid currentColor; border-radius: 999px; font-size: 12px; }
+.pricing__price { display: flex; align-items: baseline; gap: 6px; }
+.pricing__price .roll { font-size: 48px; line-height: 1; }
+.pricing__plan ul { display: grid; gap: 8px; padding-left: 1.2em; }
+
+/* FAQ: height animates natively via interpolate-size on :root */
+.faq__list { max-width: 820px; margin-top: 40px; }
+.faq details { border-bottom: 1px solid color-mix(in oklab, currentColor 14%, transparent); }
+.faq summary { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 64px; padding-block: 16px; font-size: 18px; font-weight: 500; list-style: none; cursor: pointer; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq__plus { position: relative; flex: none; width: 16px; height: 16px; transition: rotate 400ms var(--spring-b); }
+.faq__plus::before, .faq__plus::after { content: ""; position: absolute; inset: 7px 0; background: currentColor; }
+.faq__plus::after { rotate: 90deg; }
+.faq details[open] .faq__plus { rotate: 45deg; }
+.faq details p { max-width: 40em; padding: 0 48px 24px 0; opacity: .8; }
+.faq details::details-content { block-size: 0; overflow: hidden; transition: block-size 500ms var(--out), content-visibility 500ms allow-discrete; }
+.faq details[open]::details-content { block-size: auto; }
+
+/* Waitlist */
+.waitlist__card { text-align: center; }
+.waitlist__card h2, .waitlist__card .sub { margin-inline: auto; }
+.waitlist__form { max-width: 460px; margin: 32px auto 0; }
+.waitlist__field { display: flex; gap: 8px; }
+.waitlist__field input { flex: 1; min-width: 0; min-height: 48px; padding: 0 16px; border: 1px solid color-mix(in oklab, currentColor 30%, transparent); border-radius: 999px; background: none; }
+.waitlist__field input[aria-invalid] { border-color: currentColor; border-width: 2px; }
+.waitlist__error { min-height: 1.5em; margin-top: 10px; font-size: 14px; }
+.waitlist__success { display: grid; justify-items: center; gap: 14px; margin-top: 32px; }
+.waitlist__success circle, .waitlist__success path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 700ms var(--out) forwards; }
+.waitlist__success path { animation-duration: 500ms; animation-delay: 450ms; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* Footer */
+.footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; max-width: 1200px; margin-inline: auto; padding: 32px var(--gutter) 48px; font-size: 13px; opacity: .65; }
